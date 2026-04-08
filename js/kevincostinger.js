@@ -43,11 +43,65 @@
  *******************************************************/
 let sumExpenses = 0; //Use this variable to keep the sum up to date.
 
+
+
 function submitForm(e){
-    //TODO: Prevent the default behavior of the submit button.
+   e.preventDefault();
+    let amount = document.getElementById("amount");
+    let date = document.getElementById("date");
+    let text = document.getElementById("expense");
+    if(isEmpty(date.value)) {
+        let datepicker = document.getElementById("date");
+        wrongInput(datepicker);
+    }
+    if(amount.value < 0.01) {
+        let amountlbl = document.getElementById("amount");
+        wrongInput(amountlbl);
+    }
+    if(text.value.length < 3) {
+        let expenselbl = document.getElementById("expense");
+        wrongInput(expenselbl);
+    }
+    else{
+
+
+        updateSum(amount.value);
+        let table = document.getElementById("expenses");
+        let row = table.insertRow();
+        let cell0 =row.insertCell(0);
+        let cell1 =row.insertCell(1);
+        let cell2 = row.insertCell(2);
+        let cell3 =row.insertCell(3);
+        cell0.innerHTML = date.value;
+        cell1.innerHTML = formatEuro(Number(amount.value));
+        cell2.innerHTML = text.value;
+        let deletebutton = document.createElement("button");
+        deletebutton.innerHTML = "X";
+        deletebutton.addEventListener("click", ev=> {
+
+            updateSum(-Number(row.cells[1].innerHTML.split("&")[0].replace(",", ".")));
+            table.deleteRow(row.rowIndex);
+        }
+        );
+        cell3.appendChild(deletebutton);
+    }
+
     //TODO: Validate the form. If everything is fine, add the expense to the tracker and reset the form.
 }
+let button = document.getElementsByTagName("Button")[0];
+button.addEventListener("click", submitForm);
 
+function updateSum(input) {
+    sumExpenses += Number(input);
+    document.getElementById("expenseSum").innerHTML = formatEuro(sumExpenses);
+}
+function wrongInput(htmlelemt){
+    htmlelemt.focus();
+    htmlelemt.select();
+    htmlelemt.style.backgroundColor = "#ff0000";
+    setTimeout(() =>
+        htmlelemt.style.backgroundColor = "#fff",1000);
+}
 
 /*****************************
  * DO NOT CHANGE CODE BELOW.
